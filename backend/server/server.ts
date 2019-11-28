@@ -2,6 +2,8 @@ import * as restify from 'restify'
 import {environment} from '../common/environment'
 import {Router} from '../common/router'
 import * as mongoose from 'mongoose'
+import {handleError} from './error.handler'
+import {mergePatchBodyParser} from './merge-patch.parser'
 
 export class Server {
     application: restify.Server
@@ -27,6 +29,7 @@ export class Server {
                 
                 this.application.use(restify.plugins.queryParser())
                 this.application.use(restify.plugins.bodyParser())
+                this.application.use(mergePatchBodyParser)
 
                 //rotas
                 for(let router of routers){
@@ -36,6 +39,8 @@ export class Server {
                 this.application.listen(environment.server.port, ()=>{
                     resolve(this.application)
                 })
+
+                this.application.on('restifyError', handleError)
             }catch(error){
                 reject(error)
             }

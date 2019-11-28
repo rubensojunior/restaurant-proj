@@ -21,6 +21,11 @@ const restSchema = new mongoose.Schema({
         required: false,
         select: false,
         default: []
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 });
 exports.Restaurant = mongoose.model('Restaurant', restSchema);

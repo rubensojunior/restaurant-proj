@@ -31,6 +31,12 @@ class RestaurantsRouter extends model_router_1.ModelRouter {
                 return next();
             }).catch(next);
         };
+        this.findById = (req, resp, next) => {
+            this.model.findById(req.params.id)
+                .populate('owner', 'name')
+                .then(this.render(resp, next))
+                .catch(next);
+        };
     }
     applyRoutes(application) {
         application.get('/restaurants', this.findAll);

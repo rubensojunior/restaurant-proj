@@ -33,6 +33,13 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
         }).catch(next)
     }
 
+    findById = (req, resp, next)=>{
+        this.model.findById(req.params.id)
+            .populate('owner','name')
+            .then(this.render(resp,next))
+            .catch(next)
+    }
+
     applyRoutes(application: restify.Server){
         application.get('/restaurants', this.findAll)
         application.get('/restaurants/:id', [this.validateId,this.findById])

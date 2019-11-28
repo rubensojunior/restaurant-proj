@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose'
+import {User} from '../users/users.model'
 
 export interface MenuItem extends mongoose.Document {
     name: string,
@@ -7,7 +8,8 @@ export interface MenuItem extends mongoose.Document {
 
 export interface Restaurant extends mongoose.Document {
     name: string,
-    menu: MenuItem[]
+    menu: MenuItem[],
+    owner: mongoose.Types.ObjectId | User
 }
 
 const menuSchema = new mongoose.Schema ({
@@ -31,6 +33,11 @@ const restSchema = new mongoose.Schema ({
         required: false,
         select: false,
         default: []
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 })
 

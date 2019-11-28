@@ -24,8 +24,21 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         enum: ['Male', 'Female']
+    },
+    profiles: {
+        type: [String],
+        required: false
     }
 });
+userSchema.statics.findByEmail = function (email, projection) {
+    return this.findOne({ email }, projection); //{email:email}
+};
+userSchema.methods.matches = function (password) {
+    return bcrypt.compareSync(password, this.password);
+};
+userSchema.methods.hasAny = function (...profiles) {
+    return profiles.some(profile => this.profiles.indexOf(profile) !== -1);
+};
 const hashPassword = (obj, next) => {
     bcrypt.hash(obj.password, environment_1.environment.security.saltRounds)
         .then(hash => {

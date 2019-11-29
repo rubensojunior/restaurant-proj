@@ -38,11 +38,11 @@ class UsersRouter extends ModelRouter<User> {
         application.get('/users/:id', [authorize('admin'), this.validateId,
                                     this.findById])
 
-        application.post('/users', [authorize('admin'),this.save])
+        application.post('/users', this.save)
 
         application.put('/users/:id', [authorize('admin'),this.validateId,
                                     this.replace])
-                                    
+
         application.del('/users/:id', [authorize('admin'),this.validateId,
                                     this.delete])
 

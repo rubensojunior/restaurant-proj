@@ -38,9 +38,27 @@ class RestaurantsRouter extends model_router_1.ModelRouter {
                 .then(this.render(resp, next))
                 .catch(next);
         };
+        this.findByOwner = (req, resp, next) => {
+            if (req.query.owner) {
+                restaurants_model_1.Restaurant.findByOwner(req.query.owner)
+                    .then(restaurant => {
+                    if (restaurant) {
+                        return [restaurant];
+                    }
+                    else {
+                        return [];
+                    }
+                })
+                    .then(this.renderAll(resp, next))
+                    .catch(next);
+            }
+            else {
+                next();
+            }
+        };
     }
     applyRoutes(application) {
-        application.get('/restaurants', this.findAll);
+        application.get('/restaurants', [this.findByOwner, this.findAll]);
         application.get('/restaurants/:id', [this.validateId, this.findById]);
         application.post('/restaurants', [authz_handler_1.authorize('admin'), this.save]);
         application.put('/restaurants/:id', [authz_handler_1.authorize('admin'), this.validateId,

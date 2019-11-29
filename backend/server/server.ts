@@ -4,6 +4,8 @@ import {Router} from '../common/router'
 import * as mongoose from 'mongoose'
 import {handleError} from './error.handler'
 import {mergePatchBodyParser} from './merge-patch.parser'
+import { tokenParser } from '../security/token.parser'
+import * as fs from 'fs'
 
 export class Server {
     application: restify.Server
@@ -24,12 +26,15 @@ export class Server {
             try{
                 this.application = restify.createServer({
                     name: 'restaurant-api',
-                    version: '1.0.0'
+                    version: '1.0.0',
+                    //certificate: fs.readFileSync('./security/keys/cert.pem'),
+                    //key: fs.readFileSync('./security/keys/key.pem')
                 })
                 
                 this.application.use(restify.plugins.queryParser())
                 this.application.use(restify.plugins.bodyParser())
                 this.application.use(mergePatchBodyParser)
+                this.application.use(tokenParser)
 
                 //rotas
                 for(let router of routers){

@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose'
 import * as bcrypt from 'bcrypt'
 import {environment} from '../common/environment'
+import { ForbiddenError } from 'restify-errors'
 
 export interface User extends mongoose.Document {
     name: string,
@@ -80,9 +81,20 @@ const updateMiddleware = function (next){
         hashPassword(this.getUpdate(), next)
     }
 }
+
+const middlewareProfile = function (next){
+    const user: User = this
+    if(!user.profiles.includes('admin')){
+        next()
+    }else{
+        next(new ForbiddenError('Forbidden operation'))
+    }
+}
   
+userSchema.pre('save', middlewareProfile)
 userSchema.pre('save', saveMiddleware)
 userSchema.pre('findOneAndUpdate', updateMiddleware)
+userSchema.pre('update', middlewareProfile)
 userSchema.pre('update', updateMiddleware)
 
 export const User = mongoose.model<User, UserModel>('User', userSchema)

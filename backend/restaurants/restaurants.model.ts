@@ -12,6 +12,10 @@ export interface Restaurant extends mongoose.Document {
     owner: mongoose.Types.ObjectId | User
 }
 
+export interface RestaurantModel extends mongoose.Model<Restaurant> {
+    findByOwner(owner: mongoose.Types.ObjectId, projection?: string): Promise<Restaurant>
+}
+
 const menuSchema = new mongoose.Schema ({
     name: {
         type: String,
@@ -41,4 +45,8 @@ const restSchema = new mongoose.Schema ({
     }
 })
 
-export const Restaurant = mongoose.model<Restaurant>('Restaurant', restSchema)
+restSchema.statics.findByOwner = function(owner: mongoose.Types.ObjectId, projection: string){
+    return this.find({owner},projection) //{email:email}
+}
+
+export const Restaurant = mongoose.model<Restaurant,RestaurantModel>('Restaurant', restSchema)

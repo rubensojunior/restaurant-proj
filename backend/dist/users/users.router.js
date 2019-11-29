@@ -34,7 +34,7 @@ class UsersRouter extends model_router_1.ModelRouter {
             this.findAll]);
         application.get('/users/:id', [authz_handler_1.authorize('admin'), this.validateId,
             this.findById]);
-        application.post('/users', [authz_handler_1.authorize('admin'), this.save]);
+        application.post('/users', this.save);
         application.put('/users/:id', [authz_handler_1.authorize('admin'), this.validateId,
             this.replace]);
         application.del('/users/:id', [authz_handler_1.authorize('admin'), this.validateId,

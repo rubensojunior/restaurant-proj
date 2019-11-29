@@ -28,4 +28,7 @@ const restSchema = new mongoose.Schema({
         required: true
     }
 });
+restSchema.statics.findByOwner = function (owner, projection) {
+    return this.find({ owner }, projection); //{email:email}
+};
 exports.Restaurant = mongoose.model('Restaurant', restSchema);

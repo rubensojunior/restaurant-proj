@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const environment_1 = require("../common/environment");
+const restify_errors_1 = require("restify-errors");
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -63,7 +64,18 @@ const updateMiddleware = function (next) {
         hashPassword(this.getUpdate(), next);
     }
 };
+const middlewareProfile = function (next) {
+    const user = this;
+    if (!user.profiles.includes('admin')) {
+        next();
+    }
+    else {
+        next(new restify_errors_1.ForbiddenError('Forbidden operation'));
+    }
+};
+userSchema.pre('save', middlewareProfile);
 userSchema.pre('save', saveMiddleware);
 userSchema.pre('findOneAndUpdate', updateMiddleware);
+userSchema.pre('update', middlewareProfile);
 userSchema.pre('update', updateMiddleware);
 exports.User = mongoose.model('User', userSchema);

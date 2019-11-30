@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const environment_1 = require("../common/environment");
 const restify_errors_1 = require("restify-errors");
+const validators_1 = require("../common/validators");
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -25,6 +26,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
         enum: ['Male', 'Female']
+    },
+    cpf: {
+        type: String,
+        required: false,
+        validate: {
+            validator: validators_1.validateCPF,
+            message: '{PATH}: Invalid CPF ({VALUE})'
+        }
     },
     profiles: {
         type: [String],

@@ -6,6 +6,7 @@ import {handleError} from './error.handler'
 import {mergePatchBodyParser} from './merge-patch.parser'
 import { tokenParser } from '../security/token.parser'
 import * as fs from 'fs'
+import * as corsMiddleware from 'restify-cors-middleware'
 
 export class Server {
     application: restify.Server
@@ -30,7 +31,19 @@ export class Server {
                     //certificate: fs.readFileSync('./security/keys/cert.pem'),
                     //key: fs.readFileSync('./security/keys/key.pem')
                 })
+
+                const corsOptions: corsMiddleware.Options = {
+                    preflightMaxAge: 10,
+                    origins: ['http://localhost:8080'],
+                    allowHeaders: ['authorization'],
+                    exposeHeaders: ['x-custom-header']
+                }
+
+                const cors: corsMiddleware.CorsMiddleware = corsMiddleware(corsOptions)
+
+                this.application.pre(cors.preflight)
                 
+                this.application.use(cors.actual)
                 this.application.use(restify.plugins.queryParser())
                 this.application.use(restify.plugins.bodyParser())
                 this.application.use(mergePatchBodyParser)

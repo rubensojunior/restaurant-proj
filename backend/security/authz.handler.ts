@@ -11,3 +11,14 @@ export const authorize: (...profiles: string[]) => restify.RequestHandler =
             }
         }
 }
+
+export const authorizeSameUser: () => restify.RequestHandler = 
+    () =>{
+        return (req, resp, next) =>{
+            if((<any>req).authenticated !== undefined && (<any>req).authenticated._id.toString() === req.params.id){
+                next()
+            } else {
+                next(new ForbiddenError('Permission denied'))
+            }
+        }
+}

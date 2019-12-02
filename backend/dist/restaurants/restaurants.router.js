@@ -60,7 +60,7 @@ class RestaurantsRouter extends model_router_1.ModelRouter {
     applyRoutes(application) {
         application.get('/restaurants', [this.findByOwner, this.findAll]);
         application.get('/restaurants/:id', [this.validateId, this.findById]);
-        application.post('/restaurants', [authz_handler_1.authorize('admin'), this.save]);
+        application.post('/restaurants', [authz_handler_1.authorize('owner'), this.save]);
         application.put('/restaurants/:id', [authz_handler_1.authorize('admin'), this.validateId,
             this.replace]);
         application.del('/restaurants/:id', [authz_handler_1.authorize('admin'), this.validateId,

@@ -15,7 +15,7 @@
 			text
 			@click="closeSnackbar"
 		>
-			Close
+			Fechar
 		</v-btn>
 
 	</v-snackbar>

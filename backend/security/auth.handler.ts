@@ -11,7 +11,7 @@ export const authenticate: restify.RequestHandler = (req, resp, next) => {
             if(user && user.matches(password)){
                 const token = jwt.sign({sub: user.email, iss: 'restaurant-api'}, 
                     environment.security.apiSecret)
-                resp.json({name: user.name, email: user.email, acessToken: token})
+                resp.json({id: user._id, name: user.name, email: user.email, owner: user.owner, accessToken: token})
                 return next(false)
             }else{
                 return next(new NotAuthorizedError('Invalid Credentials'))

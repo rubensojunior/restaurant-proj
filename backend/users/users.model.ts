@@ -11,6 +11,7 @@ export interface User extends mongoose.Document {
     gender: string,
     cpf: string,
     profiles: string[],
+    owner: mongoose.Types.ObjectId | User,
     matches(password: string): boolean,
     hasAny(...profiles: string[]): boolean
 }
@@ -51,6 +52,11 @@ const userSchema = new mongoose.Schema({
     },
     profiles: {
         type: [String],
+        required: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: false
     }
 })

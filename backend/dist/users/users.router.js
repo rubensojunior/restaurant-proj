@@ -32,7 +32,7 @@ class UsersRouter extends model_router_1.ModelRouter {
     applyRoutes(application) {
         application.get('/users', [authz_handler_1.authorize('admin'), this.findByEmail,
             this.findAll]);
-        application.get('/users/:id', [authz_handler_1.authorize('admin'), this.validateId,
+        application.get('/users/:id', [authz_handler_1.authorizeSameUser(), this.validateId,
             this.findById]);
         application.post('/users', this.save);
         application.put('/users/:id', [authz_handler_1.authorize('admin'), this.validateId,

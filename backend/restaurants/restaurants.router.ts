@@ -63,7 +63,7 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
 
         application.get('/restaurants/:id', [this.validateId,this.findById])
 
-        application.post('/restaurants', [authorize('admin'),this.save])
+        application.post('/restaurants', [authorize('owner'),this.save])
 
         application.put('/restaurants/:id', [authorize('admin'),this.validateId,
                                                 this.replace])

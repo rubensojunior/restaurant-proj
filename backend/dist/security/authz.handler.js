@@ -11,3 +11,13 @@ exports.authorize = (...profiles) => {
         }
     };
 };
+exports.authorizeSameUser = () => {
+    return (req, resp, next) => {
+        if (req.authenticated !== undefined && req.authenticated._id.toString() === req.params.id) {
+            next();
+        }
+        else {
+            next(new restify_errors_1.ForbiddenError('Permission denied'));
+        }
+    };
+};

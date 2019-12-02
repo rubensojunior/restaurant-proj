@@ -38,6 +38,11 @@ const userSchema = new mongoose.Schema({
     profiles: {
         type: [String],
         required: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
     }
 });
 userSchema.statics.findByEmail = function (email, projection) {

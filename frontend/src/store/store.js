@@ -12,9 +12,17 @@ export default new Vuex.Store({
 			multiline: false,
 			color: '',
 			icon: ''
-		}
+		},
+		user: null,
+		drawer: true
 	},
 	mutations: {
+		setUser(state, user) {
+            state.user = user
+		},
+		setDrawer(state,drawer){
+			state.drawer = drawer
+		},
 		showSnackbar(state, payload) {
 			state.snackbar.text = payload.text
 			state.snackbar.multiline = (payload.text.length > 50) ? true : false

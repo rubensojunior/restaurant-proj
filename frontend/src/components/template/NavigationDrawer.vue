@@ -29,7 +29,7 @@
             </v-list-item>
             <v-list-item link to="/cardapios">
                 <v-list-item-action>
-                    <v-icon>mdi-silverware</v-icon>
+                    <v-icon>mdi-food-fork-drink</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                     <v-list-item-title>
@@ -39,11 +39,11 @@
             </v-list-item>
             <v-list-item link to="/cardapios">
                 <v-list-item-action>
-                    <v-icon>mdi-silverware</v-icon>
+                    <v-icon>mdi-file-document-box-multiple</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                     <v-list-item-title>
-                        Cardápios
+                        Pedidos
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>

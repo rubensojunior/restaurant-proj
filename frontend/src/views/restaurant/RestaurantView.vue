@@ -49,13 +49,13 @@
                 class="mr-2"
                 @click="editItem(item)"
             >
-                edit
+                mdi-pencil
             </v-icon>
             <v-icon
                 small
                 @click="deleteItem(item)"
             >
-                delete
+                mdi-delete
             </v-icon>
         </template>
         <template v-slot:no-data>
@@ -72,11 +72,12 @@ export default {
     data: () => ({
         dialog: false,
         headers: [
-        {
-            text: 'Nome',
-            align: 'left',
-            value: 'name',
-        }
+            {
+                text: 'Nome',
+                align: 'left',
+                value: 'name',
+            },
+            { text: 'Actions', value: 'action', sortable: false, align: 'right' },
         ],
         restautants: [],
         editedIndex: -1,

@@ -8,7 +8,7 @@
 			<LoginView v-else-if="!validantingToken && !user" />
 			<ContentView v-else />	
 		</v-content>
-		<v-footer app color="#3D3D3D" dark>
+		<v-footer app color="#424242" dark>
             <span>&copy; 2019</span>
         </v-footer>
 	</v-app>
@@ -55,20 +55,25 @@ export default {
                 headers: {Authorization:'Bearer ' + userData.accessToken} 
 			}
 
-			const res = await axios(`${environment.url.base}/users/${userData.id}`,auth)
-
-			if(res.data) {
+			await axios(`${environment.url.base}/users/${userData.id}`,auth)
+			.then(() =>{
 				this.$store.commit('setUser',userData)
-			} else {
+			})
+			.catch(()=>{
 				localStorage.removeItem(environment.user.key)
 				this.$router.push({ name: 'auth' })
-			}
+			})
 
 			this.validantingToken = false
-        }
+		},
+		setRestaurant(){
+			const restaurant = localStorage.getItem(environment.user.restaurant)
+			this.$store.commit('setRestaurant',restaurant)
+		}
     },
     created(){
-        this.validateToken()
+		this.validateToken()
+		this.setRestaurant()
     }
 }
 </script>

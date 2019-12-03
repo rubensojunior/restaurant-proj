@@ -14,11 +14,15 @@ export default new Vuex.Store({
 			icon: ''
 		},
 		user: null,
-		drawer: true
+		drawer: true,
+		restaurantSelected: null
 	},
 	mutations: {
 		setUser(state, user) {
             state.user = user
+		},
+		setRestaurant(state, restaurant){
+			state.restaurantSelected = restaurant
 		},
 		setDrawer(state,drawer){
 			state.drawer = drawer

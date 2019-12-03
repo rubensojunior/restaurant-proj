@@ -1,4 +1,5 @@
 <template>
+<v-card class="overflow-hidden">
     <v-app-bar
         app
         clipped-left
@@ -6,9 +7,10 @@
         dark
     >
         <v-app-bar-nav-icon @click.stop="setDrawer()" />
-        <v-toolbar-title>Application</v-toolbar-title>
+        <v-toolbar-title>Jacquin's App</v-toolbar-title>
         <UserDropdown />
     </v-app-bar>
+</v-card>
 </template>
 <script>
 import UserDropdown from './UserDropdown'

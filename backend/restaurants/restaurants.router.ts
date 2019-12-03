@@ -46,7 +46,24 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
             Restaurant.findByOwner(req.query.owner)
                 .then(restaurant => {
                     if(restaurant){
-                        return [restaurant]
+                        return restaurant
+                    }else{
+                        return []
+                    }
+                })
+                .then(this.renderAll(resp, next))
+                .catch(next)
+        }else{
+            next()
+        }
+    }
+
+    findByOwnerAndName = (req, resp, next)=>{
+        if(req.query.owner && req.query.name){
+            Restaurant.findByOwnerAndName(req.query.owner, req.query.name)
+                .then(restaurant => {
+                    if(restaurant){
+                        return restaurant
                     }else{
                         return []
                     }
@@ -59,11 +76,11 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
     }
 
     applyRoutes(application: restify.Server){
-        application.get('/restaurants', [this.findByOwner,this.findAll])
+        application.get('/restaurants', [this.findByOwnerAndName,this.findByOwner,this.findAll])
 
         application.get('/restaurants/:id', [this.validateId,this.findById])
 
-        application.post('/restaurants', [authorize('owner'),this.save])
+        application.post('/restaurants', [authorize('admin','owner'),this.save])
 
         application.put('/restaurants/:id', [authorize('admin'),this.validateId,
                                                 this.replace])

@@ -7,7 +7,7 @@
     >
         <template v-slot:top>
             <v-toolbar flat >
-                <v-toolbar-title>Restautantes</v-toolbar-title>
+                <v-toolbar-title>{{`Cardápio do ${$store.state.restaurant.name}`}}</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
@@ -27,8 +27,11 @@
                     <v-card-text>
                         <v-container>
                             <v-row>
-                                <v-col cols="12" sm="12" md="12">
+                                <v-col cols="12" sm="12" md="6">
                                     <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="6">
+                                    <v-text-field v-model="editedItem.price" label="Preço"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -102,12 +105,11 @@ export default {
     },
     methods: {
         async initialize () {
-            axios(`${environment.url.base}/restaurants/${this.$route.params.id}/menu`)
+            if(!this.$store.state.restaurant.id) return
+
+            axios(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`)
             .then(res =>{
                 this.menu = res.data
-            })
-            .catch(()=>{
-                alert('deu error')
             })
         },
         editItem (item) {
@@ -127,8 +129,8 @@ export default {
             }, 300)
         },
         save () {
-            this.editedItem.owner = this.$store.state.user.id
-            axios.post(`${environment.url.base}/restaurants`,this.editedItem,getAuth())
+            this.menu.push(this.editedItem)
+            axios.put(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`,this.menu,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()

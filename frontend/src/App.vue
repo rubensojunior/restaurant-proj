@@ -61,13 +61,15 @@ export default {
 			})
 			.catch(()=>{
 				localStorage.removeItem(environment.user.key)
+				localStorage.removeItem(environment.user.restaurant)
 				this.$router.push({ name: 'auth' })
 			})
 
 			this.validantingToken = false
 		},
 		setRestaurant(){
-			const restaurant = localStorage.getItem(environment.user.restaurant)
+			const json = localStorage.getItem(environment.user.restaurant)
+			const restaurant = JSON.parse(json)
 			this.$store.commit('setRestaurant',restaurant)
 		}
     },

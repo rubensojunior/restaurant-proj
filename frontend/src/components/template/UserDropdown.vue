@@ -26,6 +26,7 @@ export default {
     methods: {
         logout(){
             localStorage.removeItem(environment.user.key)
+            localStorage.removeItem(environment.user.restaurant)
             this.$store.commit('setUser', null)
             this.$router.push({ name: 'auth' })
         },

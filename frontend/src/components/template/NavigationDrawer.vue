@@ -38,7 +38,7 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item link to="/menuselectrestaurant">
+            <v-list-item link to="/menu">
                 <v-list-item-action>
                     <v-icon>mdi-food-fork-drink</v-icon>
                 </v-list-item-action>
@@ -58,7 +58,6 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            
         </v-list>
     </v-navigation-drawer>
 </template>
@@ -71,28 +70,36 @@ export default {
     data(){
         return {
             items: [],
-            item: ''
+            item: null
         }
     },
-    computed: mapState(['drawer','restaurantSelected']),
+    computed: mapState(['drawer','restaurant']),
     props: {
         source: String,
     },
     methods: {
         getRestaurants(){
-            axios(`${environment.url.base}/restaurants`)
+            axios(`${environment.url.base}/restaurants?owner=${this.$store.state.user.id}`)
             .then(res =>{
                 this.items = res.data.map(a => a.name)
             })
         },
         setRestaurant(){
-            localStorage.setItem(environment.user.restaurant,this.item)
-            this.$store.commit('setRestaurant', this.item)
+            axios(`${environment.url.base}/restaurants?owner=${this.$store.state.user.id}&name=${this.item}`)
+            .then(res=>{
+                const restaurant = { 'name': this.item, 'id': res.data[0]._id }
+                localStorage.setItem(environment.user.restaurant,JSON.stringify(restaurant))
+                this.$store.commit('setRestaurant', restaurant)
+                location.reload()
+            })
+            .catch(()=>{
+                this.item = null
+            })
         },
     },
-    mounted () {
-        this.item = this.restaurantSelected
+    mounted() {
         this.getRestaurants()
+        if(this.restaurant.name) this.item = this.restaurant.name
     },
 }
 </script>

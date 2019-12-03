@@ -7,7 +7,7 @@
     >
         <template v-slot:top>
             <v-toolbar flat >
-                <v-toolbar-title>Restautantes</v-toolbar-title>
+                <v-toolbar-title>Restaurantes</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
@@ -98,10 +98,9 @@ export default {
     },
     methods: {
         async initialize () {
-            axios(`${environment.url.base}/restaurants`)
+            axios(`${environment.url.base}/restaurants?owner=${this.$store.state.user.id}`)
             .then(res =>{
                 this.restautants = res.data
-                //setTimeout(()=> this.initialize(), 5000);
             })
         },
         editItem (item) {

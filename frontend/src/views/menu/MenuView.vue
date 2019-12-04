@@ -114,6 +114,8 @@ import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
 import {Money} from 'v-money'
+import {isEmptyOrSpaces} from '../../common/helpers'
+import { mapMutations } from 'vuex'
 export default {
     components: {Money},
     data: () => ({
@@ -178,13 +180,16 @@ export default {
             this.dialog = true
         },
         save() {
+            let restaurantId = this.$store.state.restaurant.id
+            if(!this.runValidations()) return
+            if(restaurantId == null) return
             axios.put(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`,this.menu,getAuth())
             .then(() =>{
                 this.closeDialog()
                 this.initialize()
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         addItem(){
@@ -192,7 +197,31 @@ export default {
         },
         removeItem(index){
             this.menu.splice(index,1)
-        }
+        },
+        runValidations(){
+            let hasErrors = true
+
+            this.menu.forEach(element => {
+                if(isEmptyOrSpaces(element.name)){
+                    this.showError('Um ou mais nomes de prato não foram preenchidos')
+                    hasErrors = false
+                }
+
+                if(element.price <= 0){
+                    this.showError('Um ou mais preços não foram preenchidos')
+                    hasErrors = false
+                }
+            });
+
+            return hasErrors
+        },
+        showError(text){
+            this.showSnackbar({ text, color: 'error'})
+        },
+        showSuccess(text){
+            this.showSnackbar({ text, color: 'success'})
+        },
+        ...mapMutations(["showSnackbar", "closeSnackbar"]),
     },
 }
 </script>

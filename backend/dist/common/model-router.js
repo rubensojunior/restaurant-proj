@@ -44,6 +44,12 @@ class ModelRouter extends router_1.Router {
             }).then(this.render(resp, next))
                 .catch(next);
         };
+        this.update = (req, resp, next) => {
+            const options = { runValidators: true, new: true };
+            this.model.findByIdAndUpdate(req.params.id, req.body, options)
+                .then(this.render(resp, next))
+                .catch(next);
+        };
         this.delete = (req, resp, next) => {
             this.model.deleteOne({ _id: req.params.id })
                 .then(cmdResult => {

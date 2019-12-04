@@ -14,7 +14,7 @@
                     background-color="#424242"
                     dark
                     @change="setRestaurant()"
-                    v-model="item"
+                    v-model="restaurant.name"
                 >
                 </v-select>
             </v-list-item>
@@ -70,10 +70,12 @@ export default {
     data(){
         return {
             items: [],
-            item: null
         }
     },
-    computed: mapState(['drawer','restaurant']),
+    computed: {
+        ...mapState(['drawer','restaurant']),
+        item(){ return this.restaurant.name }
+    },
     props: {
         source: String,
     },
@@ -99,7 +101,6 @@ export default {
     },
     mounted() {
         this.getRestaurants()
-        if(this.restaurant.name) this.item = this.restaurant.name
     },
 }
 </script>

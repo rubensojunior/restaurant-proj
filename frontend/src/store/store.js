@@ -15,7 +15,7 @@ export default new Vuex.Store({
 		},
 		user: null,
 		drawer: true,
-		restaurant: { name: null, id: null }
+		restaurant: { name: null, id: null },
 	},
 	mutations: {
 		setUser(state, user) {

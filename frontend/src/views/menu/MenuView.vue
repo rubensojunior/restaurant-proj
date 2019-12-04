@@ -4,6 +4,7 @@
         :items="menu"
         class="elevation-1"
         dark
+        :items-per-page="15"
     >
         <template v-slot:top>
             <v-toolbar flat >
@@ -14,55 +15,89 @@
                     vertical
                 >
                 </v-divider>
+
                 <v-spacer></v-spacer>
+
                 <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on }">
-                    <v-btn color="primary" dark class="mb-2" v-on="on">Adicionar</v-btn>
+                    <v-btn color="primary" dark class="mb-2" v-on="on" @click="openDialog()">Editar</v-btn>
                 </template>
                 <v-card>
-                    <v-card-title>
-                        <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-
+                    <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-card-title>
+                                <span class="headline">Cardápio</span>
+                            </v-card-title> 
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                            <v-card-title>
+                                <v-btn class="ml-5"
+                                    color="primary" 
+                                    dark
+                                    @click="addItem()"
+                                >
+                                    Adicionar Prato
+                                </v-btn>
+                            </v-card-title>
+                        </v-col>
+                    </v-row>
+                    
                     <v-card-text>
                         <v-container>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="6">
-                                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="6">
-                                    <v-text-field v-model="editedItem.price" label="Preço"></v-text-field>
-                                </v-col>
-                            </v-row>
+                            <v-card
+                                class="mx-auto pt-4 pb-4 mt-5" v-for="(item, index) in menu" :key="index"
+                            >
+                                 <v-card-title class="headline">{{ 'Prato ' + (index+1) }}</v-card-title>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="10" md="5">
+                                            <div class="input-container">
+                                                <input 
+                                                    id="name" 
+                                                    class="inputMenu" 
+                                                    type="text" 
+                                                    pattern=".+"
+                                                    v-model="menu[index].name"
+                                                />
+                                                <label class="labelMenu" for="name">Prato</label>
+                                            </div>
+                                        </v-col>
+                                        <v-col cols="12" sm="10" md="5">
+                                            <div class="input-container">
+                                                <money 
+                                                    id="price" 
+                                                    class="inputMenu" 
+                                                    type="text" 
+                                                    pattern=".+"
+                                                    v-model="menu[index].price"
+                                                    v-bind="money"
+                                                />
+                                                <label class="labelMenu" for="price">Preço</label>
+                                            </div>
+                                        </v-col>
+                                        <v-col cols="12" sm="2" md="2">
+                                            <v-icon @click="removeItem(index)">mdi-delete</v-icon>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card>
                         </v-container>
                     </v-card-text>
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                        <v-btn color="blue darken-1" text @click="closeDialog">Cancelar</v-btn>
                         <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
                     </v-card-actions>
                 </v-card>
                 </v-dialog>
             </v-toolbar>
         </template>
-        <template v-slot:item.action="{ item }">
-            <v-icon
-                small
-                class="mr-2"
-                @click="editItem(item)"
-            >
-                mdi-pencil
-            </v-icon>
-            <v-icon
-                small
-                @click="deleteItem(item)"
-            >
-                mdi-delete
-            </v-icon>
-        </template>
         <template v-slot:no-data>
             <v-btn color="primary" @click="initialize">Resetar</v-btn>
+        </template>
+        <template v-slot:item.price="{item}">
+            {{ item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
         </template>
     </v-data-table>
 </template>
@@ -71,7 +106,9 @@
 import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
+import {Money} from 'v-money'
 export default {
+    components: {Money},
     data: () => ({
         dialog: false,
         headers: [
@@ -81,64 +118,104 @@ export default {
                 value: 'name',
             },
             {
-                text: 'Preço',
+                text: 'Preço (R$)',
+                align: 'right',
                 value: 'price',
-            },
-            { text: 'Actions', value: 'action', sortable: false, align: 'right' },
+            }
         ],
-        menu: [],
-        editedIndex: -1,
-        editedItem: {
-            name: '',
+        money: {
+            decimal: ',',
+            thousands: '.',
+            prefix: 'R$',
+            suffix: '',
+            precision: 2,
+            masked: false,
         },
-        defaultItem: {
-            name: '',
-        },
+        menu: []
     }),
-    computed: {
-        formTitle () {
-            return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
-        }
-    },
-    mounted () {
+    created () {
         this.initialize()
     },
     methods: {
-        async initialize () {
-            if(!this.$store.state.restaurant.id) return
+        initialize () {
+            if(!this.$store.state.restaurant.id) this.menu = []
 
             axios(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`)
             .then(res =>{
                 this.menu = res.data
             })
         },
-        editItem (item) {
-            this.editedIndex = this.desserts.indexOf(item)
-            this.editedItem = Object.assign({}, item)
+        closeDialog() {
+            this.dialog = false
+            this.initialize()
+        },
+        openDialog(){
             this.dialog = true
         },
-        deleteItem (item) {
-            const index = this.desserts.indexOf(item)
-            confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-        },
-        close () {
-            this.dialog = false
-            setTimeout(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            }, 300)
-        },
-        save () {
-            this.menu.push(this.editedItem)
+        save() {
             axios.put(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`,this.menu,getAuth())
             .then(() =>{
+                this.closeDialog()
                 this.initialize()
-                this.close()
             })
             .catch(()=>{
                 alert('error')
             })
         },
+        addItem(){
+            this.menu.push({name: '', price: 0})
+        },
+        removeItem(index){
+            this.menu.splice(index,1)
+        }
     },
 }
 </script>
+<style >
+    .input-container {
+    position: relative;
+    }
+
+    .inputMenu {
+    border: 0;
+    border-bottom: 2px solid #9e9e9e;
+    outline: none;
+    transition: .2s ease-in-out;
+    box-sizing: border-box;
+    color:rgba(0, 0, 0, 0.87);
+    }
+
+    .labelMenu {
+    top: 0;
+    left: 0; right: 0;
+    color: #616161;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    font-size: 1rem;
+    cursor: text;
+    transition: .2s ease-in-out;
+    box-sizing: border-box;
+    }
+
+    .inputMenu,
+    .labelMenu {
+    width: 100%;
+    height: 3rem;
+    font-size: 1rem;
+    }
+
+    /* Interation */
+    .inputMenu:valid,
+    .inputMenu:focus {
+    border-bottom: 1.5px solid #1976d2;  
+    }
+
+    .inputMenu:valid + .labelMenu,
+    .inputMenu:focus + .labelMenu {
+    color: #1976d2;
+    font-size: .9rem;
+    top: -30px;
+    pointer-events: none;
+    }
+</style>

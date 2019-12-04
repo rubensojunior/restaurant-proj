@@ -1,7 +1,7 @@
 <template>
     <v-data-table
         :headers="headers"
-        :items="restautants"
+        :items="restaurants"
         class="elevation-1"
         dark
     >
@@ -79,7 +79,7 @@ export default {
             },
             { text: 'Actions', value: 'action', sortable: false, align: 'right' },
         ],
-        restautants: [],
+        restaurants: [],
         editedIndex: -1,
         editedItem: {
             name: '',
@@ -97,20 +97,16 @@ export default {
         this.initialize()
     },
     methods: {
-        async initialize () {
+        initialize () {
             axios(`${environment.url.base}/restaurants?owner=${this.$store.state.user.id}`)
             .then(res =>{
-                this.restautants = res.data
+                this.restaurants = res.data
             })
         },
         editItem (item) {
-            this.editedIndex = this.desserts.indexOf(item)
+            this.editedIndex = this.restaurants.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
-        },
-        deleteItem (item) {
-            const index = this.desserts.indexOf(item)
-            confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
         },
         close () {
             this.dialog = false
@@ -119,17 +115,51 @@ export default {
                 this.editedIndex = -1
             }, 300)
         },
-        save () {
+        save() {
+            if (this.editedIndex > -1) {
+                this.updateItem()
+            }else {
+                this.createItem()
+            }
+        },
+        createItem() {
             this.editedItem.owner = this.$store.state.user.id
             axios.post(`${environment.url.base}/restaurants`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.deleteRestaurantFromStore()
             })
             .catch(()=>{
                 alert('error')
             })
         },
+        updateItem() {
+            axios.patch(`${environment.url.base}/restaurants/${this.editedItem._id}`,this.editedItem,getAuth())
+            .then(() =>{
+                this.initialize()
+                this.close()
+                this.deleteRestaurantFromStore()
+            })
+            .catch(()=>{
+                alert('error')
+            })
+        },
+        deleteItem (item) {
+            axios.delete(`${environment.url.base}/restaurants/${item._id}`,getAuth())
+            .then(()=>{
+                this.initialize()
+                this.deleteRestaurantFromStore()
+            })
+            .catch(error=>{
+                alert(error)
+            })
+        },
+        deleteRestaurantFromStore(){
+            localStorage.removeItem(environment.user.restaurant)
+            this.$store.commit('setRestaurant','3')
+            this.$router.go()
+        }
     },
 }
 </script>

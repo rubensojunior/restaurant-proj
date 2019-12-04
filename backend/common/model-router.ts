@@ -47,6 +47,13 @@ export abstract class ModelRouter<D extends mongoose.Document> extends Router {
           .catch(next)
     }
 
+    update = (req, resp, next)=>{
+        const options = {runValidators: true, new : true}
+        this.model.findByIdAndUpdate(req.params.id, req.body, options)
+            .then(this.render(resp, next))
+            .catch(next)
+    }
+
     delete = (req, resp, next)=>{
         this.model.deleteOne({ _id: req.params.id })
             .then(cmdResult=>{

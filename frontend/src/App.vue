@@ -70,12 +70,12 @@ export default {
 		setRestaurant(){
 			const json = localStorage.getItem(environment.user.restaurant)
 			const restaurant = JSON.parse(json)
-			this.$store.commit('setRestaurant',restaurant)
-		}
+			if(restaurant) this.$store.commit('setRestaurant',restaurant)
+		},
     },
-    created(){
-		this.validateToken()
+    async created(){
 		this.setRestaurant()
+		await this.validateToken()
     }
 }
 </script>

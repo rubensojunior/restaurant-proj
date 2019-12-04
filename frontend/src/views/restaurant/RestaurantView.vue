@@ -28,16 +28,14 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model.trim="editedItem.name" label="Nome"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.name" label="Nome" ref="tfName"></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model.trim="editedItem.phone" label="Telefone" v-mask="['(##) ####-####', '(##) #####-####']"></v-text-field>
+                                <v-col cols="12" sm="12" md="6">
+                                    <v-text-field v-model.trim="editedItem.phone" label="Telefone" v-mask="['(##) ####-####', '(##) #####-####']" ref="tfPhone"></v-text-field>
                                 </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12">
+                                <v-col cols="12" sm="12" md="6">
                                     <v-text-field v-model.trim="editedItem.address" label="Endereço"></v-text-field>
                                 </v-col>
                             </v-row>
@@ -79,6 +77,8 @@ import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
 import {mask} from 'vue-the-mask'
+import {isEmptyOrSpaces} from '../../common/helpers'
+import { mapMutations } from 'vuex'
 export default {
     directives: {
         mask
@@ -112,7 +112,7 @@ export default {
     }),
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+            return this.editedIndex === -1 ? 'Adicionar Restaurante' : 'Editar Restaurante'
         }
     },
     mounted () {
@@ -138,6 +138,7 @@ export default {
             }, 300)
         },
         save() {
+            if(!this.runValidations()) return
             if (this.editedIndex > -1) {
                 this.updateItem()
             }else {
@@ -145,15 +146,18 @@ export default {
             }
         },
         createItem() {
-            this.editedItem.owner = this.$store.state.user.id
+            let userId = this.$store.state.user.id
+            if(userId == null) return
+            this.editedItem.owner = userId
             axios.post(`${environment.url.base}/restaurants`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Restaurante cadastrado com sucesso!')
                 this.deleteRestaurantFromStore()
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         updateItem() {
@@ -161,27 +165,61 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
-                this.deleteRestaurantFromStore()
-            })
-            .catch(()=>{
-                alert('error')
-            })
-        },
-        deleteItem (item) {
-            axios.delete(`${environment.url.base}/restaurants/${item._id}`,getAuth())
-            .then(()=>{
-                this.initialize()
+                this.showSuccess('Restaurante editado com sucesso!')
                 this.deleteRestaurantFromStore()
             })
             .catch(error=>{
-                alert(error)
+                this.showError(error)
             })
+        },
+        deleteItem (item) {
+             this.$bvModal.msgBoxConfirm('Deseja mesmo excluir o restaurante ' + item.name + '?', {
+            okTitle: 'Sim',
+            cancelTitle: 'Não',
+            cancelVariant: 'danger',
+            })
+            .then(value => {
+                if(value){
+                    axios.delete(`${environment.url.base}/restaurants/${item._id}`,getAuth())
+                    .then(()=>{
+                        this.initialize()
+                        this.showSuccess('Restaurante excluído com sucesso!')
+                        this.deleteRestaurantFromStore()
+                    })
+                    .catch(error=>{
+                        this.showError(error)
+                    })
+                }
+            })
+        },
+        runValidations(){
+            if(isEmptyOrSpaces(this.editedItem.name)){
+                this.showError('Preencha o nome do restaurante para continuar')
+                this.focus('tfName')
+                return false
+            }
+            if(!isEmptyOrSpaces(this.editedItem.phone) && this.editedItem.phone.length < 14){
+                this.showError('Preencha o telefone completamente para continuar')
+                this.focus('tfPhone')
+                return false
+            }
+            return true
         },
         deleteRestaurantFromStore(){
             localStorage.removeItem(environment.user.restaurant)
             this.$store.commit('setRestaurant',null)
             this.$router.go()
-        }
+        },
+        focus(field){
+            this.$refs[field].focus()
+        },
+        showError(text){
+            this.showSnackbar({ text, color: 'error'})
+        },
+        showSuccess(text){
+            this.showSnackbar({ text, color: 'success'})
+        },
+        ...mapMutations(["showSnackbar", "closeSnackbar"]),
     },
 }
 </script>

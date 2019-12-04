@@ -161,13 +161,22 @@ export default {
             })
         },
         deleteItem (item) {
-            axios.delete(`${environment.url.base}/categories/${item._id}`,getAuth())
-            .then(()=>{
-                this.initialize()
-                this.showSuccess('Categoria excluída com sucesso!')
+            this.$bvModal.msgBoxConfirm('Deseja mesmo excluir a categoria ' + item.name + '?', {
+            okTitle: 'Sim',
+            cancelTitle: 'Não',
+            cancelVariant: 'danger',
             })
-            .catch(error=>{
-                this.showError(error)
+            .then(value => {
+                if(value){
+                    axios.delete(`${environment.url.base}/categories/${item._id}`,getAuth())
+                    .then(()=>{
+                        this.initialize()
+                        this.showSuccess('Categoria excluída com sucesso!')
+                    })
+                    .catch(error=>{
+                        this.showError(error)
+                    })
+                }
             })
         },
         runValidations(){

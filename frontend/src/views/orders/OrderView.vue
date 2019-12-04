@@ -61,28 +61,32 @@
                             >
                                 <v-card-title class="headline">{{ 'Item ' + (index+1) }}</v-card-title>
                                 <v-container>
-                                    <v-row>
-                                        <v-col cols="12" sm="12" md="12">
-                                            <v-select
-                                                :items="itemsName.map(a=>a.name)"
-                                                label="Selecione o prato"
-                                                @change="itemChanged(index,itemsName)"
-                                                v-model="itemSelected"
-                                            ></v-select>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="5">
-                                            <v-text-field v-model.trim="item.name" label="Prato" disabled></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="2">
-                                            <v-text-field v-model="item.price" label="Preço" disabled></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="12" md="3">
-                                            <v-text-field v-model="item.amount" label="Quantidade" type="number"></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" sm="2" md="2">
-                                            <v-icon @click="removeItem(index)">mdi-delete</v-icon>
-                                        </v-col>
-                                    </v-row>
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-select
+                                                    :items="itemsName.map(a=>a.name)"
+                                                    label="Selecione o prato"
+                                                    @change="itemChanged(index,itemsName)"
+                                                    v-model="itemSelected"
+                                                ></v-select>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-text-field v-model.trim="item.name" label="Prato"></v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="5">
+                                                <v-text-field v-model="item.price" label="Preço" type="number"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="5">
+                                                <v-text-field v-model="item.amount" label="Quantidade" type="number"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="2" md="2">
+                                                <v-icon @click="removeItem(index)">mdi-delete</v-icon>
+                                            </v-col>
+                                        </v-row>
                                 </v-container>
                              </v-card>
                         </v-container>
@@ -125,6 +129,8 @@
 import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
+import {isEmptyOrSpaces} from '../../common/helpers'
+import { mapMutations } from 'vuex'
 export default {
     data: () => ({
         dialog: false,
@@ -140,8 +146,11 @@ export default {
             },
             {
                 text: 'Itens',
-                align: 'left',
                 value: 'items',
+            },
+            {
+                text: 'Status',
+                value: 'status',
             },
             { text: 'Actions', value: 'action', sortable: false, align: 'right' },
         ],
@@ -150,12 +159,12 @@ export default {
         editedItem: {
             name: '',
             table: '',
-            items: [ {price: 0, name: '', amount: 0} ]
+            items: [ {price: 0, name: '', amount: 1} ]
         },
         defaultItem: {
             name: '',
             table: '',
-            items: [ {price: 0, name: '', amount: 0} ]
+            items: [ {price: 0, name: '', amount: 1} ]
         },
         itemsName: [],
         itemSelected: '',
@@ -163,7 +172,7 @@ export default {
     }),
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+            return this.editedIndex === -1 ? 'Adicionar Pedido' : 'Editar Pedido'
         }
     },
     mounted () {
@@ -205,13 +214,12 @@ export default {
             this.dialog = true
         },
         close () {
+            this.initialize()
             this.dialog = false
-            setTimeout(() => {
-                this.editedItem = Object.assign({}, this.defaultItem)
-                this.editedIndex = -1
-            }, 300)
+            this.editedItem = this.defaultItem
         },
         save() {
+            if(!this.runValidations()) return
             if (this.editedIndex > -1) {
                 this.updateItem()
             }else {
@@ -235,9 +243,10 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Pedido cadastrado com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         updateItem() {
@@ -245,26 +254,67 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Pedido editado com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         deleteItem (item) {
-            axios.delete(`${environment.url.base}/orders/${item._id}`,getAuth())
-            .then(()=>{
-                this.initialize()
+            this.$bvModal.msgBoxConfirm('Deseja mesmo excluir o pedido?', {
+            okTitle: 'Sim',
+            cancelTitle: 'Não',
+            cancelVariant: 'danger',
             })
-            .catch(error=>{
-                alert(error)
+            .then(value => {
+                if(value){
+                    axios.delete(`${environment.url.base}/orders/${item._id}`,getAuth())
+                    .then(()=>{
+                        this.initialize()
+                        this.showSuccess('Pedido excluído com sucesso!')
+                    })
+                    .catch(error=>{
+                        this.showError(error)
+                    })
+                }
             })
         },
         removeItem(index){
             this.editedItem.items.splice(index,1)
         },
         addItem(){
-            this.editedItem.items.push(this.defaultItem)
-        }
+            this.editedItem.items.push({name: '', price: 0, amount: 1})
+        },
+        runValidations(){
+            let isValid = true
+
+            if(isEmptyOrSpaces(this.editedItem.table)){
+                this.showError('Selecione a mesa para continuar')
+                isValid = false
+            }
+
+            this.editedItem.items.forEach(element => {
+                if(isEmptyOrSpaces(element.name)){
+                    this.showError('Um ou mais nomes de prato não foram preenchidos')
+                    isValid = false
+                }else  if(element.price <= 0){
+                    this.showError('Um ou mais preços não foram preenchidos')
+                    isValid = false
+                }else if(element.amount <= 0){
+                    this.showError('Um ou mais quantidades de itens não foram preenchidos')
+                    isValid = false
+                }
+            })
+
+            return isValid
+        },
+        showError(text){
+            this.showSnackbar({ text, color: 'error'})
+        },
+        showSuccess(text){
+            this.showSnackbar({ text, color: 'success'})
+        },
+        ...mapMutations(["showSnackbar", "closeSnackbar"]),
     },
 }
 </script>

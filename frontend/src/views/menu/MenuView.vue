@@ -54,7 +54,7 @@
                                             <v-select
                                                 :items="categories.map(a=>a.name)"
                                                 label="Selecione uma categoria de prato"
-                                                v-model.trim="menu[index].category"
+                                                v-model="menu[index].category"
                                             ></v-select>
                                         </v-col>
                                         <v-col cols="12" sm="10" md="5">
@@ -199,21 +199,19 @@ export default {
             this.menu.splice(index,1)
         },
         runValidations(){
-            let hasErrors = true
+            let isValid = true
 
             this.menu.forEach(element => {
                 if(isEmptyOrSpaces(element.name)){
                     this.showError('Um ou mais nomes de prato não foram preenchidos')
-                    hasErrors = false
-                }
-
-                if(element.price <= 0){
+                    isValid = false
+                } else if(element.price <= 0){
                     this.showError('Um ou mais preços não foram preenchidos')
-                    hasErrors = false
+                    isValid = false
                 }
             });
 
-            return hasErrors
+            return isValid
         },
         showError(text){
             this.showSnackbar({ text, color: 'error'})

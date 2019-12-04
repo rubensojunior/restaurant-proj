@@ -52,7 +52,7 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.note" label="Observação"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.note" label="Observação"></v-text-field>
                                 </v-col>
                             </v-row>
                              <v-card
@@ -71,7 +71,7 @@
                                             ></v-select>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="5">
-                                            <v-text-field v-model="item.name" label="Prato" disabled></v-text-field>
+                                            <v-text-field v-model.trim="item.name" label="Prato" disabled></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="2">
                                             <v-text-field v-model="item.price" label="Preço" disabled></v-text-field>

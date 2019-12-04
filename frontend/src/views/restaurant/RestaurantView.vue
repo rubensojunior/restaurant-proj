@@ -28,17 +28,17 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.name" label="Nome"></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.phone" label="Telefone" v-mask="['(##) ####-####', '(##) #####-####']"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.phone" label="Telefone" v-mask="['(##) ####-####', '(##) #####-####']"></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.address" label="Endereço"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>

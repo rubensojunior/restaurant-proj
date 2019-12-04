@@ -28,7 +28,7 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.name" label="Nome" ref="tfName"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.name" label="Nome" ref="tfName"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -92,7 +92,7 @@ export default {
     }),
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+            return this.editedIndex === -1 ? 'Adicionar Categoria' : 'Editar Categoria'
         }
     },
     mounted () {
@@ -127,6 +127,7 @@ export default {
             return true
         },
         save() {
+            if(!this.runValidations()) return
             if (this.editedIndex > -1) {
                 this.updateItem()
             }else {
@@ -134,7 +135,6 @@ export default {
             }
         },
         createItem() {
-            if(!this.runValidations()) return
             if(!this.checkValues()) return
             this.editedItem.owner = this.$store.state.user.id
             this.editedItem.restaurant = this.$store.state.restaurant.id
@@ -149,7 +149,6 @@ export default {
             })
         },
         updateItem() {
-            if(!this.runValidations()) return
             axios.patch(`${environment.url.base}/categories/${this.editedItem._id}`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()

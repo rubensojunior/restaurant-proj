@@ -28,7 +28,7 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                                    <v-text-field v-model.trim="editedItem.name" label="Nome" ref="tfName"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -68,6 +68,8 @@
 import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
+import {isEmptyOrSpaces} from '../../common/helpers'
+import { mapMutations } from 'vuex'
 export default {
     data: () => ({
         dialog: false,
@@ -90,7 +92,7 @@ export default {
     }),
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+            return this.editedIndex === -1 ? 'Adicionar Mesa' : 'Editar Mesa'
         }
     },
     mounted () {
@@ -125,6 +127,7 @@ export default {
             return true
         },
         save() {
+            if(!this.runValidations()) return
             if (this.editedIndex > -1) {
                 this.updateItem()
             }else {
@@ -139,9 +142,10 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Mesa cadastrada com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         updateItem() {
@@ -149,20 +153,49 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Mesa editada com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         deleteItem (item) {
-            axios.delete(`${environment.url.base}/tables/${item._id}`,getAuth())
-            .then(()=>{
-                this.initialize()
+            this.$bvModal.msgBoxConfirm('Deseja mesmo excluir a mesa ' + item.name + '?', {
+            okTitle: 'Sim',
+            cancelTitle: 'Não',
+            cancelVariant: 'danger',
             })
-            .catch(error=>{
-                alert(error)
+            .then(value => {
+                if(value){
+                    axios.delete(`${environment.url.base}/tables/${item._id}`,getAuth())
+                    .then(()=>{
+                        this.initialize()
+                        this.showSuccess('Mesa excluída com sucesso!')
+                    })
+                    .catch(error=>{
+                        this.showError(error)
+                    })
+                }
             })
-        }
+        },
+        runValidations(){
+            if(isEmptyOrSpaces(this.editedItem.name)){
+                this.showError('Preencha o nome da mesa para continuar')
+                this.focus('tfName')
+                return false
+            }
+            return true
+        },
+        focus(field){
+            this.$refs[field].focus()
+        },
+        showError(text){
+            this.showSnackbar({ text, color: 'error'})
+        },
+        showSuccess(text){
+            this.showSnackbar({ text, color: 'success'})
+        },
+        ...mapMutations(["showSnackbar", "closeSnackbar"]),
     },
 }
 </script>

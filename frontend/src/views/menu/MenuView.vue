@@ -54,7 +54,7 @@
                                             <v-select
                                                 :items="categories.map(a=>a.name)"
                                                 label="Selecione uma categoria de prato"
-                                                v-model="menu[index].category"
+                                                v-model.trim="menu[index].category"
                                             ></v-select>
                                         </v-col>
                                         <v-col cols="12" sm="10" md="5">
@@ -64,7 +64,7 @@
                                                     class="inputMenu" 
                                                     type="text" 
                                                     pattern=".+"
-                                                    v-model="menu[index].name"
+                                                    v-model.trim="menu[index].name"
                                                 />
                                                 <label class="labelMenu" for="name">Prato</label>
                                             </div>

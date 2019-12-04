@@ -28,7 +28,7 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
+                                    <v-text-field v-model="editedItem.name" label="Nome" ref="tfName"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -68,6 +68,8 @@
 import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
+import {isEmptyOrSpaces} from '../../common/helpers'
+import { mapMutations } from 'vuex'
 export default {
     data: () => ({
         dialog: false,
@@ -132,6 +134,7 @@ export default {
             }
         },
         createItem() {
+            if(!this.runValidations()) return
             if(!this.checkValues()) return
             this.editedItem.owner = this.$store.state.user.id
             this.editedItem.restaurant = this.$store.state.restaurant.id
@@ -139,30 +142,52 @@ export default {
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Categoria criada com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         updateItem() {
+            if(!this.runValidations()) return
             axios.patch(`${environment.url.base}/categories/${this.editedItem._id}`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()
+                this.showSuccess('Categoria editada com sucesso!')
             })
-            .catch(()=>{
-                alert('error')
+            .catch(error=>{
+                this.showError(error)
             })
         },
         deleteItem (item) {
             axios.delete(`${environment.url.base}/categories/${item._id}`,getAuth())
             .then(()=>{
                 this.initialize()
+                this.showSuccess('Categoria excluída com sucesso!')
             })
             .catch(error=>{
-                alert(error)
+                this.showError(error)
             })
-        }
+        },
+        runValidations(){
+            if(isEmptyOrSpaces(this.editedItem.name)){
+                this.showError('Preencha o nome da categoria de prato para continuar')
+                this.focus('tfName')
+                return false
+            }
+            return true
+        },
+        focus(field){
+            this.$refs[field].focus()
+        },
+        showError(text){
+            this.showSnackbar({ text, color: 'error'})
+        },
+        showSuccess(text){
+            this.showSnackbar({ text, color: 'success'})
+        },
+        ...mapMutations(["showSnackbar", "closeSnackbar"]),
     },
 }
 </script>

@@ -9,6 +9,12 @@ import RestaurantView from '../views/restaurant/RestaurantView'
 
 import MenuView from '../views/menu/MenuView'
 
+import OrderView from '../views/orders/OrderView'
+
+import TableView from '../views/tables/TableView'
+
+import CategoryView from '../views/categories/CategoryView'
+
 Vue.use(VueRouter)
 
 const routes = [{
@@ -30,6 +36,21 @@ const routes = [{
     name: 'menu',
     path: '/menu',
     component: MenuView,
+},  
+{
+    name: 'orders',
+    path: '/orders',
+    component: OrderView,
+},  
+{
+    name: 'tables',
+    path: '/tables',
+    component: TableView,
+},  
+{
+    name: 'categories',
+    path: '/categories',
+    component: CategoryView,
 }]
 
 export default new VueRouter({

@@ -8,7 +8,7 @@
             <i class="fa fa-angle-down"></i>
         </div>
         <div class="user-dropdown-content">
-            <router-link to="/funcionarios">Funcionários</router-link>
+            <router-link to="/restaurants">Restaurantes</router-link>
             <a href @click="logout()"> Sair</a>
         </div>
     </div>
@@ -29,10 +29,6 @@ export default {
             localStorage.removeItem(environment.user.restaurant)
             this.$store.commit('setUser', null)
             this.$router.push({ name: 'auth' })
-        },
-        goToChangePass(){
-        },
-        goToUsuarios(){
         }
     }
 }

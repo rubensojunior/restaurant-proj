@@ -47,9 +47,16 @@
                             <v-card
                                 class="mx-auto pt-4 pb-4 mt-5" v-for="(item, index) in menu" :key="index"
                             >
-                                 <v-card-title class="headline">{{ 'Prato ' + (index+1) }}</v-card-title>
+                                <v-card-title class="headline">{{ 'Prato ' + (index+1) }}</v-card-title>
                                 <v-container>
                                     <v-row>
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-select
+                                                :items="categories.map(a=>a.name)"
+                                                label="Selecione uma categoria de prato"
+                                                v-model="menu[index].category"
+                                            ></v-select>
+                                        </v-col>
                                         <v-col cols="12" sm="10" md="5">
                                             <div class="input-container">
                                                 <input 
@@ -131,19 +138,37 @@ export default {
             precision: 2,
             masked: false,
         },
-        menu: []
+        menu: [],
+        categories: []
     }),
     created () {
         this.initialize()
     },
     methods: {
         initialize () {
-            if(!this.$store.state.restaurant.id) this.menu = []
-
+            if(!this.checkValues()) return
+            this.getMenus()
+            this.getCategories()
+        },
+        getMenus(){
             axios(`${environment.url.base}/restaurants/${this.$store.state.restaurant.id}/menu`)
             .then(res =>{
                 this.menu = res.data
             })
+        },
+        getCategories(){
+            axios(`${environment.url.base}/categories?owner=${this.$store.state.user.id}&restaurant=${this.$store.state.restaurant.id}`)
+            .then(res =>{
+                this.categories = res.data
+            })
+        },
+        checkValues(){
+            let userId = this.$store.state.user.id
+            let restaurantId = this.$store.state.restaurant.id
+            if(userId == null || restaurantId == null) {
+                return false
+            }
+            return true
         },
         closeDialog() {
             this.dialog = false

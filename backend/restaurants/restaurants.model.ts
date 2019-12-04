@@ -3,13 +3,16 @@ import {User} from '../users/users.model'
 
 export interface MenuItem extends mongoose.Document {
     name: string,
-    price: number
+    price: number,
+    category: string
 }
 
 export interface Restaurant extends mongoose.Document {
     name: string,
     menu: MenuItem[],
-    owner: mongoose.Types.ObjectId | User
+    owner: mongoose.Types.ObjectId | User,
+    phone: string,
+    address: string
 }
 
 export interface RestaurantModel extends mongoose.Model<Restaurant> {
@@ -25,6 +28,10 @@ const menuSchema = new mongoose.Schema ({
     price: {
         type: Number,
         required: true
+    },
+    category: {
+        type: String,
+        required: false
     }
 })
 
@@ -32,6 +39,14 @@ const restSchema = new mongoose.Schema ({
     name: {
         type: String,
         required: true
+    },
+    phone: {
+        type: String,
+        required: false
+    },
+    address: {
+        type: String,
+        required: false
     },
     menu: {
         type: [menuSchema],

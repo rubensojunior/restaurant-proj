@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-const itensSchema = new mongoose.Schema({
-    prato: {
+const itemsSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true
     },
@@ -10,18 +10,18 @@ const itensSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    quantidade: {
+    amount: {
         type: Number,
         required: true
     }
 });
-const pedidosSchema = new mongoose.Schema({
-    mesa: {
+const ordersSchema = new mongoose.Schema({
+    table: {
         type: String,
         required: true
     },
-    itens: {
-        type: [itensSchema],
+    items: {
+        type: [itemsSchema],
         required: true,
         default: []
     },
@@ -34,12 +34,20 @@ const pedidosSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    obervacao: {
+    note: {
         type: String,
+        required: false
+    },
+    restaurant: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
         required: true
     }
 });
-pedidosSchema.statics.findByOwner = function (owner, projection) {
+ordersSchema.statics.findByOwner = function (owner, projection) {
     return this.find({ owner }, projection); //{email:email}
 };
-exports.Pedido = mongoose.model('Pedido', pedidosSchema);
+ordersSchema.statics.findByOwnerAndRestaurant = function (owner, restaurant, projection) {
+    return this.find({ owner, restaurant }, projection); //{email:email}
+};
+exports.Order = mongoose.model('Order', ordersSchema);

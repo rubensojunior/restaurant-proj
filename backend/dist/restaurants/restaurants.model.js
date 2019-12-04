@@ -9,12 +9,24 @@ const menuSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true
+    },
+    category: {
+        type: String,
+        required: false
     }
 });
 const restSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    phone: {
+        type: String,
+        required: false
+    },
+    address: {
+        type: String,
+        required: false
     },
     menu: {
         type: [menuSchema],

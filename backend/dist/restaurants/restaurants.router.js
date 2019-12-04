@@ -13,7 +13,15 @@ class RestaurantsRouter extends model_router_1.ModelRouter {
                     throw new restify_errors_1.NotFoundError('Restaurant not found');
                 }
                 else {
-                    resp.json(rest.menu);
+                    resp.json(rest.menu.sort(function (a, b) {
+                        if (a.category > b.category) {
+                            return 1;
+                        }
+                        if (a.category < b.category) {
+                            return -1;
+                        }
+                        return 0;
+                    }));
                     return next();
                 }
             }).catch(next);

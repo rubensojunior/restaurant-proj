@@ -28,13 +28,13 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item link to="/restaurants">
+            <v-list-item link to="/categories">
                 <v-list-item-action>
-                    <v-icon>mdi-silverware-fork-knife</v-icon>
+                    <v-icon>mdi-shape</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                     <v-list-item-title>
-                        Restaurants
+                        Categorias de Pratos
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
@@ -48,7 +48,17 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item link to="/pedidos">
+            <v-list-item link to="/tables">
+                <v-list-item-action>
+                    <v-icon>mdi-table-chair</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                    <v-list-item-title>
+                        Mesas
+                    </v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+            <v-list-item link to="/orders">
                 <v-list-item-action>
                     <v-icon>mdi-file-document-box-multiple</v-icon>
                 </v-list-item-action>

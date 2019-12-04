@@ -1,13 +1,13 @@
 <template>
     <v-data-table
         :headers="headers"
-        :items="restaurants"
+        :items="categories"
         class="elevation-1"
         dark
     >
         <template v-slot:top>
             <v-toolbar flat >
-                <v-toolbar-title>Restaurantes</v-toolbar-title>
+                <v-toolbar-title>{{`Categorias de Pratos do ${$store.state.restaurant.name}`}}</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
@@ -29,16 +29,6 @@
                             <v-row>
                                 <v-col cols="12" sm="12" md="12">
                                     <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.phone" label="Telefone" v-mask="['(##) ####-####', '(##) #####-####']"></v-text-field>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="12" sm="12" md="12">
-                                    <v-text-field v-model="editedItem.address" label="Endereço"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -78,11 +68,7 @@
 import axios from 'axios'
 import { getAuth } from '../../common/axios'
 import { environment } from '../../common/environment'
-import {mask} from 'vue-the-mask'
 export default {
-    directives: {
-        mask
-    },
     data: () => ({
         dialog: false,
         headers: [
@@ -91,17 +77,9 @@ export default {
                 align: 'left',
                 value: 'name',
             },
-            {
-                text: 'Telefone',
-                value: 'phone',
-            },
-            {
-                text: 'Endereço',
-                value: 'address',
-            },
             { text: 'Actions', value: 'action', sortable: false, align: 'right' },
         ],
-        restaurants: [],
+        categories: [],
         editedIndex: -1,
         editedItem: {
             name: '',
@@ -120,13 +98,14 @@ export default {
     },
     methods: {
         initialize () {
-            axios(`${environment.url.base}/restaurants?owner=${this.$store.state.user.id}`)
+            if(!this.checkValues()) return
+            axios(`${environment.url.base}/categories?owner=${this.$store.state.user.id}&restaurant=${this.$store.state.restaurant.id}`)
             .then(res =>{
-                this.restaurants = res.data
+                this.categories = res.data
             })
         },
         editItem (item) {
-            this.editedIndex = this.restaurants.indexOf(item)
+            this.editedIndex = this.categories.indexOf(item)
             this.editedItem = Object.assign({}, item)
             this.dialog = true
         },
@@ -137,6 +116,14 @@ export default {
                 this.editedIndex = -1
             }, 300)
         },
+        checkValues(){
+            let userId = this.$store.state.user.id
+            let restaurantId = this.$store.state.restaurant.id
+            if(userId == null || restaurantId == null) {
+                return false
+            }
+            return true
+        },
         save() {
             if (this.editedIndex > -1) {
                 this.updateItem()
@@ -145,42 +132,36 @@ export default {
             }
         },
         createItem() {
+            if(!this.checkValues()) return
             this.editedItem.owner = this.$store.state.user.id
-            axios.post(`${environment.url.base}/restaurants`,this.editedItem,getAuth())
+            this.editedItem.restaurant = this.$store.state.restaurant.id
+            axios.post(`${environment.url.base}/categories`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()
-                this.deleteRestaurantFromStore()
             })
             .catch(()=>{
                 alert('error')
             })
         },
         updateItem() {
-            axios.patch(`${environment.url.base}/restaurants/${this.editedItem._id}`,this.editedItem,getAuth())
+            axios.patch(`${environment.url.base}/categories/${this.editedItem._id}`,this.editedItem,getAuth())
             .then(() =>{
                 this.initialize()
                 this.close()
-                this.deleteRestaurantFromStore()
             })
             .catch(()=>{
                 alert('error')
             })
         },
         deleteItem (item) {
-            axios.delete(`${environment.url.base}/restaurants/${item._id}`,getAuth())
+            axios.delete(`${environment.url.base}/categories/${item._id}`,getAuth())
             .then(()=>{
                 this.initialize()
-                this.deleteRestaurantFromStore()
             })
             .catch(error=>{
                 alert(error)
             })
-        },
-        deleteRestaurantFromStore(){
-            localStorage.removeItem(environment.user.restaurant)
-            this.$store.commit('setRestaurant',null)
-            this.$router.go()
         }
     },
 }

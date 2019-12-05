@@ -1,15 +1,16 @@
-# Install depencies
+# How to execute
+## Install depencies
 ```
 npm install
 ```
 
-# Compile
+## Compile
 ```
 npm run serve
 ```
 
-# Run 
+## Run 
 Open localhost:8080 on browser
 
-# Dependecies
+## Dependecies
 -npm -Vue

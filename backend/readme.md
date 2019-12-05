@@ -1,5 +1,8 @@
 # How to execute
+## required commands
 to run open the terminal in the project folder, and run the commands:
+
+<code>npm install</code>
 
 <code>tsc -w</code>
 
@@ -7,7 +10,7 @@ to run open the terminal in the project folder, and run the commands:
 
 After that open localhost:3000 on browser
 
-# Dependecies
+## Dependecies
 -Node
 -typescript
 -npm

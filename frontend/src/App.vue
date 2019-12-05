@@ -9,7 +9,7 @@
 			<ContentView v-else />	
 		</v-content>
 		<v-footer app color="#424242" dark>
-            <span>&copy; 2019</span>
+            <span>EJ Manager - Versão Web &copy; 2019</span>
         </v-footer>
 	</v-app>
 </template>

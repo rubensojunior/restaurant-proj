@@ -8,8 +8,8 @@
             <i class="fa fa-angle-down"></i>
         </div>
         <div class="user-dropdown-content">
-            <router-link to="/restaurants">Restaurantes</router-link>
-            <a href @click="logout()"> Sair</a>
+            <router-link to="/restaurants" class="user-dropdown-option-color">Restaurantes</router-link>
+            <a href @click="logout()" class="user-dropdown-option-color"> Sair</a>
         </div>
     </div>
 </template>
@@ -96,5 +96,9 @@ export default {
         text-decoration: none;
         color: #000;
         background-color: #EDEDED;
+    }
+
+    .user-dropdown-option-color{
+        color: #3D4AAC !important;
     }
 </style>

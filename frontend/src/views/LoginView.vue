@@ -1,9 +1,19 @@
-<template>
+<template>    
     <v-container class="fill-height" fluid>
+        <v-card class="overflow-hidden">
+            <v-app-bar
+                app
+                clipped-left
+                color="#3D4AAC"
+                dark
+            >
+                <v-toolbar-title>EJ Manager - Versão Web</v-toolbar-title>
+            </v-app-bar>
+        </v-card>
         <v-row align="center" justify="center">
             <v-col cols="12" sm="10" md="8">
                 <v-card class="elevation-12">
-                    <v-toolbar color="primary" dark flat >
+                    <v-toolbar color="#3D4AAC" dark flat >
                         <v-toolbar-title>JR RestManager</v-toolbar-title>
                         <v-spacer />
                     </v-toolbar>
@@ -17,18 +27,19 @@
                                 v-model.trim="user.name"
                                 ref="tfName"
                                 v-if="screen === '2'"
+                                color="#3D4AAC"
                             />
 
                             <v-radio-group v-model="user.gender" color="black" v-if="screen === '2'">
                                 <template v-slot:label>
                                     <div>Selecione seu sexo:</div>
                                 </template>
-                                <v-radio value="Male" color="primary">
+                                <v-radio value="Male" color="#3D4AAC">
                                     <template v-slot:label>
                                     <div>Masculino</div>
                                     </template>
                                 </v-radio>
-                                <v-radio value="Female" color="primary">
+                                <v-radio value="Female" color="#3D4AAC">
                                     <template v-slot:label>
                                     <div>Feminino</div>
                                     </template>
@@ -83,7 +94,7 @@
                         <v-spacer />
                         <v-btn 
                             text 
-                            color="primary" 
+                            color="#3D4AAC" 
                             small
                             @click="navigateScreens('2')"
                             v-if="screen === '1'"
@@ -92,7 +103,7 @@
                         </v-btn>
                         <v-btn 
                             text 
-                            color="primary" 
+                            color="#3D4AAC" 
                             small
                             @click="navigateScreens('1')"
                             v-if="screen !== '1'"
@@ -101,7 +112,7 @@
                         </v-btn>
                         <v-btn 
                             text 
-                            color="primary" 
+                            color="#3D4AAC" 
                             small
                             @click="navigateScreens('3')"
                             v-if="screen === '1'"
@@ -109,23 +120,26 @@
                             Recuperar Senha
                         </v-btn>
                         <v-btn 
-                            color="primary" 
+                            color="#3D4AAC" 
                             @click="login()"
                             v-if="screen === '1'"
+                            dark
                         >
                             Login
                         </v-btn>
                         <v-btn 
-                            color="primary" 
+                            color="#3D4AAC" 
                             @click="register()"
                             v-if="screen === '2'"
+                            dark
                         >
                             Cadastrar
                         </v-btn>
                         <v-btn 
-                            color="primary" 
+                            color="#3D4AAC" 
                             @click="recoverPass()"
                             v-if="screen === '3'"
+                            dark
                         >
                             Recuperar
                         </v-btn>

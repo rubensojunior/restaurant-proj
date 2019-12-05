@@ -54,6 +54,7 @@ export default {
     },
     methods: {
         initialize(){
+            if(!this.checkValues()) return
             axios(`${environment.url.base}/orders?owner=${this.$store.state.user.id}&restaurant=${this.$store.state.restaurant.id}`)
             .then(res =>{
                 let order = res.data
@@ -70,7 +71,15 @@ export default {
                 })
                 this.orders = lastOrdersOrdenedByDesc
             })
-        }
+        },
+        checkValues(){
+            let userId = this.$store.state.user.id
+            let restaurantId = this.$store.state.restaurant.id
+            if(userId == null || restaurantId == null) {
+                return false
+            }
+            return true
+		}
     },
     mounted(){
         this.initialize()

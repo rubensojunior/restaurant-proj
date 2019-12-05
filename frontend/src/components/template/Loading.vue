@@ -3,7 +3,7 @@
         <v-progress-circular
             :size="70"
             :width="7"
-            color="primary"
+            color="#3D4AAC"
             indeterminate
         ></v-progress-circular>
     </div>

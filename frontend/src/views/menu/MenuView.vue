@@ -22,7 +22,7 @@
 
                     <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on }">
-                        <v-btn color="primary" dark class="mb-2" v-on="on" @click="openDialog()">Editar</v-btn>
+                        <v-btn color="#3D4AAC" dark class="mb-2" v-on="on" @click="openDialog()">Editar</v-btn>
                     </template>
                     <v-card>
                         <v-row>
@@ -34,7 +34,7 @@
                             <v-col cols="12" sm="6" md="6">
                                 <v-card-title>
                                     <v-btn class="ml-5"
-                                        color="primary" 
+                                        color="#3D4AAC" 
                                         dark
                                         @click="addItem()"
                                     >
@@ -103,7 +103,7 @@
                 </v-toolbar>
             </template>
             <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">Resetar</v-btn>
+                <v-btn color="#3D4AAC" @click="initialize">Resetar</v-btn>
             </template>
             <template v-slot:item.price="{item}">
                 {{ item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
@@ -113,7 +113,7 @@
             <b-card-text>
                 Não foi possível carregar a página, verifique se selecionou um restaurante e tente novamente.
             </b-card-text>
-            <b-button variant="primary" @click="initialize()">Recarregar</b-button>
+            <b-button @click="initialize()">Recarregar</b-button>
         </b-card>
     </div>
 </template>
@@ -162,7 +162,10 @@ export default {
     },
     methods: {
         initialize () {
-            if(!this.checkValues()) this.pageLoaded = false
+            if(!this.checkValues()) {
+                this.pageLoaded = false
+                return
+            }
             this.getMenus()
             this.getCategories()
         },

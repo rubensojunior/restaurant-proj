@@ -14,7 +14,8 @@ export interface Order extends mongoose.Document {
     owner: mongoose.Types.ObjectId | User,
     status: string,
     note: string,
-    restaurant: mongoose.Types.ObjectId | Restaurant
+    restaurant: mongoose.Types.ObjectId | Restaurant,
+    creationDate: Date
 }
 
 export interface OrderModel extends mongoose.Model<Order> {
@@ -64,6 +65,11 @@ const ordersSchema = new mongoose.Schema ({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
         required: true
+    },
+    creationDate: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
 })
 

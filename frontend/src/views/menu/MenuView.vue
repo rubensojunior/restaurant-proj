@@ -1,112 +1,121 @@
 <template>
-    <v-data-table
-        :headers="headers"
-        :items="menu"
-        class="elevation-1"
-        dark
-        :items-per-page="15"
-    >
-        <template v-slot:top>
-            <v-toolbar flat >
-                <v-toolbar-title>{{`Cardápio do ${$store.state.restaurant.name}`}}</v-toolbar-title>
-                <v-divider
-                    class="mx-4"
-                    inset
-                    vertical
-                >
-                </v-divider>
+    <div>
+        <v-data-table
+            :headers="headers"
+            :items="menu"
+            class="elevation-1"
+            dark
+            :items-per-page="15"
+            v-if="pageLoaded"
+        >
+            <template v-slot:top>
+                <v-toolbar flat >
+                    <v-toolbar-title>{{`Cardápio do ${$store.state.restaurant.name}`}}</v-toolbar-title>
+                    <v-divider
+                        class="mx-4"
+                        inset
+                        vertical
+                    >
+                    </v-divider>
 
-                <v-spacer></v-spacer>
+                    <v-spacer></v-spacer>
 
-                <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on }">
-                    <v-btn color="primary" dark class="mb-2" v-on="on" @click="openDialog()">Editar</v-btn>
-                </template>
-                <v-card>
-                    <v-row>
-                        <v-col cols="12" sm="6" md="6">
-                            <v-card-title>
-                                <span class="headline">Cardápio</span>
-                            </v-card-title> 
-                        </v-col>
-                        <v-col cols="12" sm="6" md="6">
-                            <v-card-title>
-                                <v-btn class="ml-5"
-                                    color="primary" 
-                                    dark
-                                    @click="addItem()"
+                    <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on }">
+                        <v-btn color="primary" dark class="mb-2" v-on="on" @click="openDialog()">Editar</v-btn>
+                    </template>
+                    <v-card>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-card-title>
+                                    <span class="headline">Cardápio</span>
+                                </v-card-title> 
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-card-title>
+                                    <v-btn class="ml-5"
+                                        color="primary" 
+                                        dark
+                                        @click="addItem()"
+                                    >
+                                        Adicionar Prato
+                                    </v-btn>
+                                </v-card-title>
+                            </v-col>
+                        </v-row>
+                        
+                        <v-card-text>
+                            <v-container>
+                                <v-card
+                                    class="mx-auto pt-4 pb-4 mt-5" v-for="(item, index) in menu" :key="index"
                                 >
-                                    Adicionar Prato
-                                </v-btn>
-                            </v-card-title>
-                        </v-col>
-                    </v-row>
-                    
-                    <v-card-text>
-                        <v-container>
-                            <v-card
-                                class="mx-auto pt-4 pb-4 mt-5" v-for="(item, index) in menu" :key="index"
-                            >
-                                <v-card-title class="headline">{{ 'Prato ' + (index+1) }}</v-card-title>
-                                <v-container>
-                                    <v-row>
-                                        <v-col cols="12" sm="12" md="12">
-                                            <v-select
-                                                :items="categories.map(a=>a.name)"
-                                                label="Selecione uma categoria de prato"
-                                                v-model="menu[index].category"
-                                            ></v-select>
-                                        </v-col>
-                                        <v-col cols="12" sm="10" md="5">
-                                            <div class="input-container">
-                                                <input 
-                                                    id="name" 
-                                                    class="inputMenu" 
-                                                    type="text" 
-                                                    pattern=".+"
-                                                    v-model.trim="menu[index].name"
-                                                />
-                                                <label class="labelMenu" for="name">Prato</label>
-                                            </div>
-                                        </v-col>
-                                        <v-col cols="12" sm="10" md="5">
-                                            <div class="input-container">
-                                                <money 
-                                                    id="price" 
-                                                    class="inputMenu" 
-                                                    type="text" 
-                                                    pattern=".+"
-                                                    v-model="menu[index].price"
-                                                    v-bind="money"
-                                                />
-                                                <label class="labelMenu" for="price">Preço</label>
-                                            </div>
-                                        </v-col>
-                                        <v-col cols="12" sm="2" md="2">
-                                            <v-icon @click="removeItem(index)">mdi-delete</v-icon>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-card>
-                        </v-container>
-                    </v-card-text>
+                                    <v-card-title class="headline">{{ 'Prato ' + (index+1) }}</v-card-title>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-select
+                                                    :items="categories.map(a=>a.name)"
+                                                    label="Selecione uma categoria de prato"
+                                                    v-model="menu[index].category"
+                                                ></v-select>
+                                            </v-col>
+                                            <v-col cols="12" sm="10" md="5">
+                                                <div class="input-container">
+                                                    <input 
+                                                        id="name" 
+                                                        class="inputMenu" 
+                                                        type="text" 
+                                                        pattern=".+"
+                                                        v-model.trim="menu[index].name"
+                                                    />
+                                                    <label class="labelMenu" for="name">Prato</label>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="12" sm="10" md="5">
+                                                <div class="input-container">
+                                                    <money 
+                                                        id="price" 
+                                                        class="inputMenu" 
+                                                        type="text" 
+                                                        pattern=".+"
+                                                        v-model="menu[index].price"
+                                                        v-bind="money"
+                                                    />
+                                                    <label class="labelMenu" for="price">Preço</label>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="12" sm="2" md="2">
+                                                <v-icon @click="removeItem(index)">mdi-delete</v-icon>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card>
+                            </v-container>
+                        </v-card-text>
 
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="closeDialog">Cancelar</v-btn>
-                        <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
-                    </v-card-actions>
-                </v-card>
-                </v-dialog>
-            </v-toolbar>
-        </template>
-        <template v-slot:no-data>
-            <v-btn color="primary" @click="initialize">Resetar</v-btn>
-        </template>
-        <template v-slot:item.price="{item}">
-            {{ item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
-        </template>
-    </v-data-table>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="closeDialog">Cancelar</v-btn>
+                            <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                    </v-dialog>
+                </v-toolbar>
+            </template>
+            <template v-slot:no-data>
+                <v-btn color="primary" @click="initialize">Resetar</v-btn>
+            </template>
+            <template v-slot:item.price="{item}">
+                {{ item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+            </template>
+        </v-data-table>
+        <b-card bg-variant="dark" text-variant="white" title="Ocorreu um erro na exibição da página" v-else>
+            <b-card-text>
+                Não foi possível carregar a página, verifique se selecionou um restaurante e tente novamente.
+            </b-card-text>
+            <b-button variant="primary" @click="initialize()">Recarregar</b-button>
+        </b-card>
+    </div>
 </template>
 
 <script>
@@ -127,6 +136,10 @@ export default {
                 value: 'name',
             },
             {
+                text: 'Categoria',
+                value: 'category',
+            },
+            {
                 text: 'Preço (R$)',
                 align: 'right',
                 value: 'price',
@@ -141,14 +154,15 @@ export default {
             masked: false,
         },
         menu: [],
-        categories: []
+        categories: [],
+        pageLoaded: true
     }),
     created () {
         this.initialize()
     },
     methods: {
         initialize () {
-            if(!this.checkValues()) return
+            if(!this.checkValues()) this.pageLoaded = false
             this.getMenus()
             this.getCategories()
         },

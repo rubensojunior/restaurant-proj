@@ -37,7 +37,8 @@ const restSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+        select: false
     }
 });
 restSchema.statics.findByOwner = function (owner, projection) {

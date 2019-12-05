@@ -67,7 +67,7 @@
                             />
 
                             <v-text-field
-                                id="senha"
+                                id="password"
                                 label="Senha"
                                 name="password"
                                 prepend-icon="mdi-lock"
@@ -79,7 +79,7 @@
                             />
 
                             <v-text-field
-                                id="senha"
+                                id="passwordRepeated"
                                 label="Repetir Senha"
                                 name="senharepetida"
                                 prepend-icon="mdi-lock"

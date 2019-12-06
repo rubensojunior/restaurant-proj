@@ -1,29 +1,16 @@
-# frontend
-
-## Project setup
+# How to execute
+## Install depencies
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Compile
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Run 
+Open localhost:8080 on browser
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Dependecies
+-npm -Vue

@@ -60,7 +60,7 @@ class TablesRouter extends ModelRouter<Table> {
         application.put('/tables/:id', [authorize('admin','owner'),this.validateId,
                                                 this.replace])
 
-        application.patch('/tables/:id', [authorize('admin'),this.validateId,
+        application.patch('/tables/:id', [authorize('admin','owner'),this.validateId,
                                                 this.update])
 
         application.del('/tables/:id', [authorize('owner','admin'),this.validateId,

@@ -7,7 +7,7 @@
         dark
     >
         <v-app-bar-nav-icon @click.stop="setDrawer()" />
-        <v-toolbar-title>EJ Manager - Versão Web</v-toolbar-title>
+        <v-toolbar-title @click="goToHome()" style="cursor:pointer">EJ Manager - Versão Web</v-toolbar-title>
         <UserDropdown />
     </v-app-bar>
 </v-card>
@@ -23,6 +23,9 @@ export default {
     methods: {
         setDrawer(){
             this.$store.commit('setDrawer',!this.drawer)
+        },
+        goToHome(){
+            this.$router.push({path:'/'})
         }
     }
 }

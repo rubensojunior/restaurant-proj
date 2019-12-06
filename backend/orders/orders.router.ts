@@ -85,7 +85,7 @@ class OrdersRouter extends ModelRouter<Order> {
         application.put('/orders/:id', [authorize('admin','owner'),this.validateId,
                                                 this.replace])
 
-        application.patch('/orders/:id', [authorize('admin'),this.validateId,
+        application.patch('/orders/:id', [authorize('admin','owner'),this.validateId,
                                                 this.update])
 
         application.del('/orders/:id', [authorize('owner','admin'),this.validateId,
@@ -93,7 +93,7 @@ class OrdersRouter extends ModelRouter<Order> {
 
         application.get('/orders/:id/menu', [this.validateId,this.findItems])
 
-        application.put('/orders/:id/menu', [authorize('admin'),this.validateId, 
+        application.put('/orders/:id/menu', [authorize('admin','owner'),this.validateId, 
                                                 this.replaceMenu])
     }
 }

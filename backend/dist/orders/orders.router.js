@@ -81,12 +81,12 @@ class OrdersRouter extends model_router_1.ModelRouter {
         application.post('/orders', [authz_handler_1.authorize('admin', 'owner'), this.save]);
         application.put('/orders/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.replace]);
-        application.patch('/orders/:id', [authz_handler_1.authorize('admin'), this.validateId,
+        application.patch('/orders/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.update]);
         application.del('/orders/:id', [authz_handler_1.authorize('owner', 'admin'), this.validateId,
             this.delete]);
         application.get('/orders/:id/menu', [this.validateId, this.findItems]);
-        application.put('/orders/:id/menu', [authz_handler_1.authorize('admin'), this.validateId,
+        application.put('/orders/:id/menu', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.replaceMenu]);
     }
 }

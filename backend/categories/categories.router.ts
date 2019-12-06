@@ -60,7 +60,7 @@ class CategoriesRouter extends ModelRouter<Category> {
         application.put('/categories/:id', [authorize('admin','owner'),this.validateId,
                                                 this.replace])
 
-        application.patch('/categories/:id', [authorize('admin'),this.validateId,
+        application.patch('/categories/:id', [authorize('admin','owner'),this.validateId,
                                                 this.update])
 
         application.del('/categories/:id', [authorize('owner','admin'),this.validateId,

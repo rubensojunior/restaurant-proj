@@ -55,7 +55,7 @@ class TablesRouter extends model_router_1.ModelRouter {
         application.post('/tables', [authz_handler_1.authorize('admin', 'owner'), this.save]);
         application.put('/tables/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.replace]);
-        application.patch('/tables/:id', [authz_handler_1.authorize('admin'), this.validateId,
+        application.patch('/tables/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.update]);
         application.del('/tables/:id', [authz_handler_1.authorize('owner', 'admin'), this.validateId,
             this.delete]);

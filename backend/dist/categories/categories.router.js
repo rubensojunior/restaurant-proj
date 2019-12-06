@@ -55,7 +55,7 @@ class CategoriesRouter extends model_router_1.ModelRouter {
         application.post('/categories', [authz_handler_1.authorize('admin', 'owner'), this.save]);
         application.put('/categories/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.replace]);
-        application.patch('/categories/:id', [authz_handler_1.authorize('admin'), this.validateId,
+        application.patch('/categories/:id', [authz_handler_1.authorize('admin', 'owner'), this.validateId,
             this.update]);
         application.del('/categories/:id', [authz_handler_1.authorize('owner', 'admin'), this.validateId,
             this.delete]);

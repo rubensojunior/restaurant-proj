@@ -1,4 +1,4 @@
-# restaurant-proj
+# EJ MANAGER
 Simple restaurant management project.
 
 # How to execute
